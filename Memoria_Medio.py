@@ -6,10 +6,11 @@ import os
 
 def main(ventana_principal):
 
-    
+
+
     def cerrar_aplicacion():
-        ventana.destroy()
-        ventana_principal.deiconify()
+       ventana.destroy()
+       ventana_principal.deiconify()
 
     def manejar_click(index):
         nonlocal bloqueado
@@ -43,18 +44,18 @@ def main(ventana_principal):
     def contar_par():
         nonlocal pares_encontrados
         pares_encontrados += 1
-        if pares_encontrados == 4:
+        if pares_encontrados == 8:
             mensaje_ganador()
 
     def mensaje_ganador():
-        messagebox.showinfo('¡Felicidades!', '¡Ganaste el nivel fácil!')
+        messagebox.showinfo('¡Felicidades!', '¡Ganaste el nivel medio!')
         ventana.destroy()
         ventana_principal.deiconify() 
 
 
     ventana = tk.Toplevel()
     ventana.title('Juego de Memoria')
-    ventana.geometry('600x400')
+    ventana.geometry('600x600')
     ventana.resizable(False, False) 
     ruta_imagenes = os.path.join(os.path.dirname(__file__), "imagenes")
 
@@ -76,7 +77,7 @@ def main(ventana_principal):
 
     imagen_reverso = tk.PhotoImage(file=os.path.join(ruta_imagenes, "reverso.png"))
 
-    imagenes_seleccionadas = random.sample(Imagenes, 4)
+    imagenes_seleccionadas = random.sample(Imagenes, 8)
     imagenes_tk = [tk.PhotoImage(file=img) for img in imagenes_seleccionadas]
     imagenes_duplicadas = imagenes_tk * 2
     random.shuffle(imagenes_duplicadas)
@@ -86,7 +87,7 @@ def main(ventana_principal):
     bloqueado = False
     pares_encontrados = 0
 
-    for i in range(8):
+    for i in range(16):
         boton = tk.Button(frame_botones, image=imagen_reverso,
                         command=lambda i=i: manejar_click(i))
         boton.grid(row=i//4, column=i%4, padx=10, pady=10)
@@ -97,7 +98,6 @@ def main(ventana_principal):
 
     ventana.protocol("WM_DELETE_WINDOW", cerrar_aplicacion)
     ventana.mainloop()
-
 
 if __name__ == "__main__":
     main()
