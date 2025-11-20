@@ -1,99 +1,204 @@
 import tkinter as tk
-from tkinter import messagebox
 import random
+import time
+from tkinter import messagebox
 import os
+from PIL import Image, ImageTk 
 
+# --- VARIABLES GLOBALES DEL JUEGO ---
+cartas_seleccionadas = []
+primer_click = None
+segundo_click = None
+pares_encontrados = 0
+juego_terminado = False
+contador_intentos = 0
+tiempo_inicio = 0
 
-def main(ventana_principal):
+# --- CONFIGURACIÓN DE APARIENCIA ---
+# (Puedes usar estas constantes para darles estilo a los botones de las cartas si quieres)
+COLOR_FONDO_CARTA = 'lightblue' 
+COLOR_TEXTO_CARTA = 'black'
+COLOR_FONDO_SELECCION = 'yellow'
 
-    def manejar_click(index):
-        nonlocal bloqueado
-        if bloqueado or botones[index]['state'] == 'disabled':
-            return
+# --- LÓGICA DEL JUEGO ---
 
-        boton = botones[index]
-        boton.config(image=imagenes_duplicadas[index])
-        boton['state'] = 'disabled'
+def verificar_par(ventana, etiquetas_cartas, parent_window):
+    global cartas_seleccionadas, primer_click, segundo_click, pares_encontrados, contador_intentos
 
-        seleccionados.append((index, imagenes_duplicadas[index]))
-
-        if len(seleccionados) == 2:
-            button1, img1 = seleccionados[0]
-            button2, img2 = seleccionados[1]
-
-            if img1 == img2:
-                seleccionados.clear()
-                contar_par()
-            else:
-                bloqueado = True
-                ventana.after(300, lambda: ocultar_no_coincidentes(button1, button2))
-
-    def ocultar_no_coincidentes(button1, button2):
-        nonlocal bloqueado
-        botones[button1].config(image=imagen_reverso, state='normal')
-        botones[button2].config(image=imagen_reverso, state='normal')
-        seleccionados.clear()
-        bloqueado = False
-
-    def contar_par():
-        nonlocal pares_encontrados
+    # Deshabilita temporalmente los botones para que el usuario no haga más clics
+    for etiqueta in etiquetas_cartas:
+        etiqueta.config(state=tk.DISABLED)
+    
+    # Pausa para que el usuario vea la segunda carta
+    ventana.update()
+    time.sleep(0.7)
+    
+    # Comprobar si son un par
+    if cartas_seleccionadas[0] == cartas_seleccionadas[1]:
+        # ¡Es un par!
+        primer_click.config(text=cartas_seleccionadas[0], bg='green', fg='white', relief=tk.SUNKEN)
+        segundo_click.config(text=cartas_seleccionadas[1], bg='green', fg='white', relief=tk.SUNKEN)
+        
+        # Deshabilita permanentemente los botones de las cartas encontradas
+        primer_click.config(state=tk.DISABLED)
+        segundo_click.config(state=tk.DISABLED)
+        
         pares_encontrados += 1
-        if pares_encontrados == 4:
-            mensaje_ganador()
+        contador_intentos += 1
+        
+        if pares_encontrados == len(etiquetas_cartas) // 2:
+            finalizar_juego(ventana, parent_window)
+    else:
+        # No es un par. Voltear las cartas
+        primer_click.config(text="?", bg=COLOR_FONDO_CARTA, relief=tk.RAISED)
+        segundo_click.config(text="?", bg=COLOR_FONDO_CARTA, relief=tk.RAISED)
+        contador_intentos += 1
 
-    def mensaje_ganador():
-        messagebox.showinfo('¡Felicidades!', '¡Ganaste el nivel fácil!')
+    # Restablece el estado del juego para el siguiente intento
+    cartas_seleccionadas = []
+    primer_click = None
+    segundo_click = None
+    
+    # Vuelve a habilitar las cartas que no han sido encontradas
+    for etiqueta in etiquetas_cartas:
+        if etiqueta['text'] == '?':
+            etiqueta.config(state=tk.NORMAL)
+            
+    # Actualizar contador de intentos (si tienes una etiqueta para ello)
+    # Por simplicidad, no se incluye el widget de contador aquí, pero se puede añadir fácilmente.
+
+def click_carta(etiqueta, ventana, etiquetas_cartas, parent_window):
+    global cartas_seleccionadas, primer_click, segundo_click
+    
+    if etiqueta['text'] == '?' and len(cartas_seleccionadas) < 2:
+        # Muestra el valor de la carta
+        valor = etiqueta.carta_valor
+        etiqueta.config(text=valor, bg=COLOR_FONDO_SELECCION)
+        
+        cartas_seleccionadas.append(valor)
+        
+        if primer_click is None:
+            primer_click = etiqueta
+        elif segundo_click is None:
+            segundo_click = etiqueta
+            # Es el segundo clic, verificar si hay par
+            verificar_par(ventana, etiquetas_cartas, parent_window)
+
+
+def finalizar_juego(ventana, parent_window):
+    global tiempo_inicio, contador_intentos
+    tiempo_fin = time.time()
+    tiempo_total = round(tiempo_fin - tiempo_inicio)
+    
+    mensaje = (f"¡Felicidades! Has ganado.\n"
+               f"Intentos: {contador_intentos}\n"
+               f"Tiempo total: {tiempo_total} segundos")
+               
+    messagebox.showinfo("Juego Terminado", mensaje)
+    
+    ventana.destroy()
+    parent_window.deiconify() # Muestra la ventana principal de nuevo
+
+
+def on_closing(ventana, parent_window):
+    if messagebox.askokcancel("Salir", "¿Estás seguro que quieres salir del juego?"):
         ventana.destroy()
-        ventana_principal.deiconify() 
+        parent_window.deiconify() # Muestra la ventana principal de nuevo
 
 
-    ventana = tk.Toplevel()
-    ventana.title('Juego de Memoria')
-    ventana.geometry('600x400')
-    ventana.resizable(False, False) 
-    ruta_imagenes = os.path.join(os.path.dirname(__file__), "imagenes")
+# --- FUNCIÓN PRINCIPAL DEL JUEGO ---
 
-
-    etiqueta = tk.Label(ventana, text='Selecciona dificultad', font=('Times New Roman', 20))
-    etiqueta.pack()
-
-    frame_botones = tk.Frame(ventana)
-    frame_botones.pack(pady=20)
-
-    Imagenes = [
-    os.path.join(ruta_imagenes, "amd.png"),
-    os.path.join(ruta_imagenes, "basedatos.png"),
-    os.path.join(ruta_imagenes, "binario.png"),
-    os.path.join(ruta_imagenes, "c++.png"),
-    os.path.join(ruta_imagenes, "code.png"),
-    os.path.join(ruta_imagenes, "computadora.png"),
-    os.path.join(ruta_imagenes, "html.png"),
-    os.path.join(ruta_imagenes, "intel.png"),
-    os.path.join(ruta_imagenes, "javas.png"),
-    os.path.join(ruta_imagenes, "python.png"),]
-
-    imagen_reverso = tk.PhotoImage(file=os.path.join(ruta_imagenes, "reverso.png"))
-
-    imagenes_seleccionadas = random.sample(Imagenes, 4)
-    imagenes_tk = [tk.PhotoImage(file=img) for img in imagenes_seleccionadas]
-    imagenes_duplicadas = imagenes_tk * 2
-    random.shuffle(imagenes_duplicadas)
-
-    botones = []
-    seleccionados = []
-    bloqueado = False
+def main(parent_window, num_pares):
+    global cartas_seleccionadas, pares_encontrados, primer_click, segundo_click, contador_intentos, tiempo_inicio
+    
+    # Restablecer variables globales
+    cartas_seleccionadas = []
     pares_encontrados = 0
+    primer_click = None
+    segundo_click = None
+    contador_intentos = 0
+    tiempo_inicio = time.time()
+    
+    # 1. Configuración de la Ventana
+    ventana = tk.Toplevel(parent_window)
+    ventana.title("Juego de Memoria")
+    ventana.protocol("WM_DELETE_WINDOW", lambda: on_closing(ventana, parent_window))
+    
+    # 2. Generar el Tablero
+    
+    # Definir valores de las cartas (letras o números)
+    valores_cartas = [chr(65 + i) for i in range(num_pares)] * 2
+    random.shuffle(valores_cartas)
+    
+    # Determinar el layout (ejemplo: si es 4 pares (8 cartas), será 2x4)
+    if num_pares == 4:
+        filas, cols = 2, 4
+    elif num_pares == 8:
+        filas, cols = 4, 4
+    elif num_pares == 10:
+        filas, cols = 4, 5
+    else:
+        filas, cols = 2, num_pares # Por si acaso
+    
+    etiquetas_cartas = []
+    marco_tablero = tk.Frame(ventana, padx=10, pady=10)
+    marco_tablero.pack(padx=10, pady=10)
+    
+    indice = 0
+    for fila in range(filas):
+        for col in range(cols):
+            # Crea el botón/etiqueta de la carta
+            etiqueta = tk.Button(marco_tablero, text="?", font=("Arial", 20), 
+                                 width=4, height=2, bg=COLOR_FONDO_CARTA, 
+                                 relief=tk.RAISED)
+            
+            # Asigna el valor real de la carta como un atributo personalizado
+            etiqueta.carta_valor = valores_cartas[indice] 
+            
+            # Asigna la función de clic, pasándole la etiqueta actual
+            etiqueta.config(command=lambda e=etiqueta: click_carta(e, ventana, etiquetas_cartas, parent_window))
+            
+            etiqueta.grid(row=fila, column=col, padx=5, pady=5)
+            etiquetas_cartas.append(etiqueta)
+            indice += 1
 
-    for i in range(8):
-        boton = tk.Button(frame_botones, image=imagen_reverso,
-                        command=lambda i=i: manejar_click(i))
-        boton.grid(row=i//4, column=i%4, padx=10, pady=10)
-        botones.append(boton)
+    # ⚠️ APLICACIÓN DE FONDO DE IMAGEN EN LA VENTANA DEL JUEGO ⚠️
+    try:
+        # 1. Forzamos a Tkinter a calcular el tamaño final de la ventana 
+        #    (necesario para obtener el tamaño real del tablero)
+        ventana.update_idletasks() 
 
-    ventana.imagenes_tk = imagenes_duplicadas
-    ventana.imagen_reverso = imagen_reverso
+        # Obtenemos las dimensiones actuales y dinámicas de la ventana
+        ancho_juego = ventana.winfo_width()
+        alto_juego = ventana.winfo_height()
 
+        ruta_base = os.path.dirname(os.path.abspath(__file__))
+        
+        # Carga la imagen de fondo del juego (debe ser 'fondo_juego.png' en 'imagenes/')
+        img_pil_juego = Image.open(os.path.join(ruta_base, "imagenes", "fondo_juego.png"))
+        
+        # Redimensionar la imagen al tamaño dinámico de la ventana
+        img_redimensionada_juego = img_pil_juego.resize((ancho_juego, alto_juego), Image.LANCZOS)
+        
+        global img_fondo_juego 
+        img_fondo_juego = ImageTk.PhotoImage(img_redimensionada_juego) 
+        
+        # 2. Crea el Canvas del mismo tamaño que la ventana del juego
+        canvas_juego = tk.Canvas(ventana, width=ancho_juego, height=alto_juego)
+        canvas_juego.place(x=0, y=0, relwidth=1, relheight=1) 
+
+        # 3. Dibuja la imagen en el canvas
+        canvas_juego.create_image(0, 0, image=img_fondo_juego, anchor="nw") 
+
+        # 4. Eleva todos los widgets (marco_tablero, etc.) por encima del canvas
+        #    para que el tablero sea visible sobre el fondo.
+        for widget in ventana.winfo_children():
+            if widget != canvas_juego:
+                widget.lift() # tk.lift() eleva el widget a la parte superior de la pila
+        
+    except Exception as e:
+        print(f"Error al aplicar fondo de juego: {e}. Usando color plano.")
+        ventana.config(bg='darkgray')
+        
+    # 3. Iniciar el Loop de la Ventana
     ventana.mainloop()
-
-if __name__ == "__main__":
-    main()
