@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
+from PIL import Image, ImageTk 
 import random
 import os
 
+# --- CONSTANTES ---
 COLOR_FONDO = "#34495e"
 COLOR_SUPERIOR = "#2c3e50"
 COLOR_BOTON_NORMAL = "#3498db"
@@ -11,6 +13,10 @@ COLOR_TEXTO_CLARO = "white"
 FUENTE_MOVIMIENTOS = ('Courier New', 20, 'bold')
 FUENTE_TITULO_RECORDS = ('Helvetica', 14, 'bold')
 FUENTE_PUNTAJE_RECORDS = ('Helvetica', 12)
+
+# Definimos el tamaño de la ventana
+ANCHO_VENTANA = 550 
+ALTO_VENTANA = 450
 
 
 def main(ventana_principal, funcion_actualizar_records):
@@ -103,25 +109,66 @@ def main(ventana_principal, funcion_actualizar_records):
         
         if puntajes:
             for i, puntaje in enumerate(puntajes):
-                 color_rank = "#f1c40f" if i == 0 else ("#bdc3c7" if i == 1 else "#cd7f32")
-                 tk.Label(ventana_records, text=f"#{i+1}: {puntaje} movimientos", 
-                          font=FUENTE_PUNTAJE_RECORDS, bg=color_rank, fg='black', width=20, relief=tk.RIDGE).pack(pady=2)
+                  color_rank = "#f1c40f" if i == 0 else ("#bdc3c7" if i == 1 else "#cd7f32")
+                  tk.Label(ventana_records, text=f"#{i+1}: {puntaje} movimientos", 
+                           font=FUENTE_PUNTAJE_RECORDS, bg=color_rank, fg='black', width=20, relief=tk.RIDGE).pack(pady=2)
         else:
             tk.Label(ventana_records, text="No hay récords aún.", font=FUENTE_PUNTAJE_RECORDS, bg=COLOR_SUPERIOR, fg=COLOR_TEXTO_CLARO).pack(pady=5)
             
+    
+    # --- CONFIGURACIÓN DE VENTANA Y FONDO ---
+    
+    # [1. INICIALIZACIÓN DE VARIABLES (canvas)]
+    canvas = None 
+    
+    # [2. CREACIÓN DE LA VENTANA (CRÍTICO)]
     ventana = tk.Toplevel()
     ventana.title('Juego de Memoria - Fácil')
-    ventana.geometry('550x450')
+    ventana.geometry(f'{ANCHO_VENTANA}x{ALTO_VENTANA}')
     ventana.resizable(False, False) 
-    ventana.configure(bg=COLOR_FONDO)
+    
+    # [3. INICIALIZACIÓN DE ATRIBUTO (img_fondo)]
+    ventana.img_fondo = None # Ahora se puede hacer porque 'ventana' existe
     
     ruta_imagenes = os.path.join(os.path.dirname(__file__), "imagenes")
+
+    # LÓGICA DE IMAGEN DE FONDO
+    try:
+        # Usamos el nuevo nombre de archivo
+        ruta_fondo_facil = os.path.join(ruta_imagenes, "imagen_facil1.png")
+        
+        # Carga la imagen, redimensiona y guarda la referencia
+        img_pil = Image.open(ruta_fondo_facil)
+        img_redimensionada = img_pil.resize((ANCHO_VENTANA, ALTO_VENTANA), Image.LANCZOS)
+        ventana.img_fondo = ImageTk.PhotoImage(img_redimensionada) 
+
+        # Creamos un Canvas y colocamos la imagen de fondo
+        canvas = tk.Canvas(ventana, width=ANCHO_VENTANA, height=ALTO_VENTANA)
+        canvas.pack(fill="both", expand=True) 
+        canvas.create_image(0, 0, image=ventana.img_fondo, anchor="nw") 
+        
+        contenedor_widgets = canvas # Los frames irán sobre el Canvas
+        
+    except Exception as e:
+        # El programa cae aquí si la imagen aún no se encuentra
+        print(f"Error cargando imagen de fondo: {e}. Usando color de fondo estático.")
+        ventana.configure(bg=COLOR_FONDO)
+        contenedor_widgets = ventana # Los frames irán sobre la ventana si falla
+    # --- FIN DE CONFIGURACIÓN DE VENTANA Y FONDO ---
+
 
     contador_monvimientos_var = tk.IntVar()
     contador_monvimientos_var.set(0)
     
-    frame_superior = tk.Frame(ventana, bg=COLOR_SUPERIOR)
-    frame_superior.pack(fill='x', pady=0)
+    # El Frame es hijo del Canvas/Contenedor
+    frame_superior = tk.Frame(contenedor_widgets, bg=COLOR_SUPERIOR)
+    
+    # Colocación del Frame Superior
+    if contenedor_widgets == canvas:
+        # Usamos create_window para colocar el frame en el Canvas
+        canvas.create_window(ANCHO_VENTANA / 2, 30, window=frame_superior) 
+    else:
+        frame_superior.pack(fill='x', pady=0)
     
     tk.Label(frame_superior, text="Movimientos: ", 
              bg=COLOR_SUPERIOR, 
@@ -143,8 +190,15 @@ def main(ventana_principal, funcion_actualizar_records):
                             relief=tk.FLAT)
     btn_records.pack(side=tk.RIGHT, padx=20, pady=10)
 
-    frame_botones = tk.Frame(ventana, bg=COLOR_FONDO)
-    frame_botones.pack(pady=25)
+    # El Frame es hijo del Canvas/Contenedor
+    frame_botones = tk.Frame(contenedor_widgets, bg=COLOR_FONDO)
+
+    # Colocación del Frame de Botones
+    if contenedor_widgets == canvas:
+        # Usamos create_window para colocar el frame en el Canvas
+        canvas.create_window(ANCHO_VENTANA / 2, 260, window=frame_botones) 
+    else:
+        frame_botones.pack(pady=25)
 
     Imagenes = [
     os.path.join(ruta_imagenes, "amd.png"),
