@@ -3,8 +3,18 @@ from tkinter import messagebox
 import random
 import os
 
+COLOR_FONDO = "#34495e"
+COLOR_SUPERIOR = "#2c3e50"
+COLOR_BOTON_NORMAL = "#3498db"
+COLOR_BOTON_RECORDS = "#e67e22"
+COLOR_TEXTO_CLARO = "white"
+FUENTE_MOVIMIENTOS = ('Courier New', 20, 'bold')
+FUENTE_TITULO_RECORDS = ('Helvetica', 14, 'bold')
+FUENTE_PUNTAJE_RECORDS = ('Helvetica', 12)
 
-def main(ventana_principal, funcion_actualizar_records): 
+
+def main(ventana_principal, funcion_actualizar_records):
+    
     ventana_records_abierta = False
 
     def cerrar_aplicacion():
@@ -17,7 +27,7 @@ def main(ventana_principal, funcion_actualizar_records):
             return
 
         boton = botones[index]
-        boton.config(image=imagenes_duplicadas[index])
+        boton.config(image=imagenes_duplicadas[index], highlightbackground=COLOR_BOTON_NORMAL)
         boton['state'] = 'disabled'
 
         seleccionados.append((index, imagenes_duplicadas[index]))
@@ -31,12 +41,12 @@ def main(ventana_principal, funcion_actualizar_records):
                 contar_par()
             else:
                 bloqueado = True
-                ventana.after(300, lambda: ocultar_no_coincidentes(button1, button2))
+                ventana.after(600, lambda: ocultar_no_coincidentes(button1, button2))
 
     def ocultar_no_coincidentes(button1, button2):
         nonlocal bloqueado
-        botones[button1].config(image=imagen_reverso, state='normal')
-        botones[button2].config(image=imagen_reverso, state='normal')
+        botones[button1].config(image=imagen_reverso, state='normal', highlightbackground=COLOR_SUPERIOR)
+        botones[button2].config(image=imagen_reverso, state='normal', highlightbackground=COLOR_SUPERIOR)
         
         valor_actual = contador_monvimientos_var.get()
         valor_actual += 1 
@@ -60,7 +70,7 @@ def main(ventana_principal, funcion_actualizar_records):
         else:
             msg = f'¡Ganaste con {movimientos} movimientos!'
             
-        messagebox.showinfo('¡Juego Terminado!', msg)
+        messagebox.showinfo('🎉 Juego Terminado!', msg)
         ventana.destroy()
         ventana_principal.deiconify()
         
@@ -74,10 +84,11 @@ def main(ventana_principal, funcion_actualizar_records):
         puntajes = ventana_principal.RECORDS_GLOBALES["medio"] 
         
         ventana_records = tk.Toplevel(ventana)
-        ventana_records.title('Top 3 Récords - Medio')
+        ventana_records.title('🏆 Top 3 Récords - Medio')
         ventana_records.geometry('300x200')
         ventana_records.resizable(False, False)
         ventana_records.transient(ventana)
+        ventana_records.configure(bg=COLOR_SUPERIOR)
 
         def cerrar_records_juego():
             nonlocal ventana_records_abierta
@@ -87,39 +98,54 @@ def main(ventana_principal, funcion_actualizar_records):
         ventana_records.protocol("WM_DELETE_WINDOW", cerrar_records_juego)
         ventana_records_abierta = True
         
-        tk.Label(ventana_records, text="🏆 Mejores Movimientos (Medio) 🏆", 
-                 font=('Arial', 14, 'bold')).pack(pady=10)
+        tk.Label(ventana_records, text="🏅 Mejores Movimientos (Medio)", 
+                 font=FUENTE_TITULO_RECORDS, bg=COLOR_SUPERIOR, fg=COLOR_TEXTO_CLARO).pack(pady=10)
         
         if puntajes:
             for i, puntaje in enumerate(puntajes):
-                tk.Label(ventana_records, text=f"#{i+1}: {puntaje} movimientos", font=('Arial', 12)).pack(pady=2)
+                 color_rank = "#f1c40f" if i == 0 else ("#bdc3c7" if i == 1 else "#cd7f32")
+                 tk.Label(ventana_records, text=f"#{i+1}: {puntaje} movimientos", 
+                          font=FUENTE_PUNTAJE_RECORDS, bg=color_rank, fg='black', width=20, relief=tk.RIDGE).pack(pady=2)
         else:
-            tk.Label(ventana_records, text="No hay récords aún.", font=('Arial', 12)).pack(pady=5)
+            tk.Label(ventana_records, text="No hay récords aún.", font=FUENTE_PUNTAJE_RECORDS, bg=COLOR_SUPERIOR, fg=COLOR_TEXTO_CLARO).pack(pady=5)
 
 
     ventana = tk.Toplevel()
-    ventana.title('Juego de Memoria')
-    ventana.geometry('600x600') 
+    ventana.title('Juego de Memoria - Medio')
+    ventana.geometry('550x580')
     ventana.resizable(False, False) 
+    ventana.configure(bg=COLOR_FONDO)
+    
     ruta_imagenes = os.path.join(os.path.dirname(__file__), "imagenes")
 
     contador_monvimientos_var = tk.IntVar()
     contador_monvimientos_var.set(0)
     
-    frame_superior = tk.Frame(ventana)
-    frame_superior.pack(pady=10)
+    frame_superior = tk.Frame(ventana, bg=COLOR_SUPERIOR)
+    frame_superior.pack(fill='x', pady=0)
+    
+    tk.Label(frame_superior, text="Movimientos: ", 
+             bg=COLOR_SUPERIOR, 
+             fg=COLOR_TEXTO_CLARO, 
+             font=('Arial', 16)).pack(side=tk.LEFT, padx=(20, 5), pady=10)
     
     etiqueta_movimientos = tk.Label(frame_superior, 
                                     textvariable=contador_monvimientos_var, 
-                                    font=('Times New Roman', 16))
-    etiqueta_movimientos.pack(side=tk.LEFT, padx=20)
+                                    font=FUENTE_MOVIMIENTOS,
+                                    bg=COLOR_SUPERIOR,
+                                    fg=COLOR_BOTON_NORMAL)
+    etiqueta_movimientos.pack(side=tk.LEFT, padx=(0, 20), pady=10)
     
-    btn_records = tk.Button(frame_superior, text="Ver Récords", 
-                            command=mostrar_records_juego)
-    btn_records.pack(side=tk.RIGHT, padx=20)
+    btn_records = tk.Button(frame_superior, text="🏆 Ver Récords", 
+                            command=mostrar_records_juego,
+                            bg=COLOR_BOTON_RECORDS,
+                            fg=COLOR_TEXTO_CLARO,
+                            font=('Helvetica', 10, 'bold'),
+                            relief=tk.FLAT)
+    btn_records.pack(side=tk.RIGHT, padx=20, pady=10)
     
-    frame_botones = tk.Frame(ventana)
-    frame_botones.pack(pady=20)
+    frame_botones = tk.Frame(ventana, bg=COLOR_FONDO)
+    frame_botones.pack(pady=25)
 
     Imagenes = [
     os.path.join(ruta_imagenes, "amd.png"),
@@ -146,15 +172,17 @@ def main(ventana_principal, funcion_actualizar_records):
     pares_encontrados = 0
 
     for i in range(16):
-        boton = tk.Button(frame_botones, image=imagen_reverso,
+        boton = tk.Button(frame_botones, 
+                          image=imagen_reverso,
+                          bd=4,
+                          relief=tk.RAISED,
+                          highlightthickness=2,
+                          highlightbackground=COLOR_SUPERIOR,
                           command=lambda i=i: manejar_click(i))
-        boton.grid(row=i//4, column=i%4, padx=10, pady=10)
+        boton.grid(row=i//4, column=i%4, padx=12, pady=12)
         botones.append(boton)
 
     ventana.imagenes_tk = imagenes_duplicadas
     ventana.imagen_reverso = imagen_reverso
 
     ventana.protocol("WM_DELETE_WINDOW", cerrar_aplicacion)
-
-if __name__ == "__main__":
-    main()

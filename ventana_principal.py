@@ -1,7 +1,20 @@
 import tkinter as tk
+from tkinter import messagebox
 import Memoria_Facil
 import Memoria_Medio
 import Memoria_Dificil
+import os
+
+COLOR_FONDO = "#2c3e50"
+COLOR_BOTON_NORMAL = "#3498db"
+COLOR_BOTON_RECORDS = "#e67e22"
+COLOR_TEXTO_CLARO = "white"
+COLOR_TEXTO_OSCURO = "#2c3e50"
+FUENTE_TITULO = ('Helvetica', 18, 'bold')
+FUENTE_BOTON = ('Helvetica', 12, 'bold')
+
+
+
 
 
 def actualizar_records(nivel, movimientos):
@@ -13,37 +26,6 @@ def actualizar_records(nivel, movimientos):
     RECORDS_GLOBALES[nivel] = RECORDS_GLOBALES[nivel][:3]
     
     return movimientos in RECORDS_GLOBALES[nivel]
-
-
-def mostrar_top_3(nivel):
-    
-    puntajes = ventana_principal.RECORDS_GLOBALES.get(nivel, [])
-    
-    ventana_principal.withdraw()
-
-    ventana_records = tk.Toplevel()
-    ventana_records.title(f'Top 3 Récords - {nivel.capitalize()}')
-    ventana_records.geometry('300x250')
-    ventana_records.resizable(False, False)
-
-    def cerrar_records():
-        ventana_records.destroy()
-        ventana_principal.deiconify()
-
-    ventana_records.protocol("WM_DELETE_WINDOW", cerrar_records)
-    
-    tk.Label(ventana_records, text=f"Mejores Movimientos ({nivel.capitalize()})", 
-             font=('Arial', 14, 'bold')).pack(pady=10)
-    
-    if puntajes:
-        for i, puntaje in enumerate(puntajes):
-            tk.Label(ventana_records, text=f"#{i+1}: {puntaje} movimientos", font=('Arial', 12)).pack(pady=2)
-    else:
-        tk.Label(ventana_records, text="No hay récords aún.", font=('Arial', 12)).pack(pady=5)
-    
-    btn_cerrar = tk.Button(ventana_records, text="Cerrar", 
-                           command=cerrar_records)
-    btn_cerrar.pack(pady=15)
 
 
 def cerrar_aplicacion():
@@ -64,11 +46,37 @@ def abrir_memoria_dificil():
     Memoria_Dificil.main(ventana_principal, actualizar_records) 
 
 
+ruta_imagenes = os.path.join(os.path.dirname(__file__), "imagenes")
 
 ventana_principal = tk.Tk()
 ventana_principal.title('Juego de Memoria')
-ventana_principal.geometry('300x450') 
+ventana_principal.geometry('350x500')
 ventana_principal.resizable(False, False)
+ventana_principal.configure(bg=COLOR_FONDO)
+
+try:
+    ruta_fondo_principal = os.path.join(ruta_imagenes, "imagen_fondo.png")
+    imagen_fondo_principal_obj = tk.PhotoImage(file=ruta_fondo_principal)
+    ventana_principal.imagen_fondo_principal_ref = imagen_fondo_principal_obj
+
+    label_fondo_principal = tk.Label(ventana_principal, image=imagen_fondo_principal_obj)
+    label_fondo_principal.place(x=0, y=0, relwidth=1, relheight=1)
+    
+    contenedor_widgets = label_fondo_principal
+    bg_widgets_color = label_fondo_principal['bg'] 
+    
+except tk.TclError:
+    ventana_principal.configure(bg=COLOR_FONDO)
+    contenedor_widgets = ventana_principal
+    bg_widgets_color = COLOR_FONDO
+try:
+  
+    img = tk.PhotoImage(file=os.path.join(ruta_imagenes, "icono.png"))
+    ventana_principal.iconphoto(True, img)
+
+except tk.TclError:
+    pass
+
 
 ventana_principal.RECORDS_GLOBALES = { 
     "facil": [],
@@ -76,54 +84,44 @@ ventana_principal.RECORDS_GLOBALES = {
     "dificil": []
 }
 
-etiqueta = tk.Label(ventana_principal, text='Elige una dificultad', font=('Times New Roman', 16))
-etiqueta.pack(pady=20)
+etiqueta = tk.Label(ventana_principal, text='🧠 Selecciona la Dificultad', 
+                    font=FUENTE_TITULO, 
+                    bg=COLOR_FONDO, 
+                    fg=COLOR_TEXTO_CLARO)
+etiqueta.pack(pady=30)
 
-
-btn_facil = tk.Button(ventana_principal, text='Fácil', font=('Arial', 14), width=15,
-                      command=abrir_memoria_facil) 
+btn_facil = tk.Button(ventana_principal, text='⭐ Fácil (4 Pares)', 
+                      command=abrir_memoria_facil,
+                      font=FUENTE_BOTON, 
+                      bg=COLOR_BOTON_NORMAL, 
+                      fg=COLOR_TEXTO_CLARO, 
+                      width=20, 
+                      relief=tk.RIDGE,
+                      bd=3)
 btn_facil.pack(pady=10)
 
-btn_normal = tk.Button(ventana_principal, text='Medio', font=('Arial', 14), width=15,
-                       command=abrir_memoria_medio) 
+btn_normal = tk.Button(ventana_principal, text='🌟 Medio (8 Pares)', 
+                       command=abrir_memoria_medio,
+                       font=FUENTE_BOTON, 
+                       bg=COLOR_BOTON_NORMAL, 
+                       fg=COLOR_TEXTO_CLARO, 
+                       width=20,
+                       relief=tk.RIDGE,
+                       bd=3) 
 btn_normal.pack(pady=10)
 
-btn_dificil = tk.Button(ventana_principal, text='Difícil', font=('Arial', 14), width=15,
-                        command=abrir_memoria_dificil) 
+btn_dificil = tk.Button(ventana_principal, text='👑 Difícil (12 Pares)', 
+                        command=abrir_memoria_dificil,
+                        font=FUENTE_BOTON, 
+                        bg=COLOR_BOTON_NORMAL, 
+                        fg=COLOR_TEXTO_CLARO, 
+                        width=20,
+                        relief=tk.RIDGE,
+                        bd=3) 
 btn_dificil.pack(pady=10)
 
 
 
-
-def mostrar_top_3_selector():
-   
-    ventana_selector_records = tk.Toplevel(ventana_principal)
-    ventana_selector_records.title('Selecciona Nivel de Récord')
-    ventana_selector_records.geometry('250x250')
-    ventana_selector_records.resizable(False, False)
-    ventana_selector_records.transient(ventana_principal)
-    
-    ventana_principal.withdraw() 
-
-    def abrir_record_y_cerrar_selector(nivel):
-        ventana_selector_records.destroy()
-        mostrar_top_3(nivel)
-
-    def cerrar_selector():
-        ventana_selector_records.destroy()
-        ventana_principal.deiconify()
-    
-    ventana_selector_records.protocol("WM_DELETE_WINDOW", cerrar_selector)
-
-    tk.Label(ventana_selector_records, text='Ver Top 3 de:', font=('Arial', 14)).pack(pady=15)
-
-    tk.Button(ventana_selector_records, text='Fácil', width=10, 
-              command=lambda: abrir_record_y_cerrar_selector("facil")).pack(pady=5)
-    tk.Button(ventana_selector_records, text='Medio', width=10, 
-              command=lambda: abrir_record_y_cerrar_selector("medio")).pack(pady=5)
-    tk.Button(ventana_selector_records, text='Difícil', width=10, 
-              command=lambda: abrir_record_y_cerrar_selector("dificil")).pack(pady=5)
-    
 
 ventana_principal.protocol("WM_DELETE_WINDOW", cerrar_aplicacion)
 ventana_principal.mainloop()
