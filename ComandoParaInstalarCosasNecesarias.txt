@@ -1,0 +1,6 @@
+## Instalación de dependencias
+
+Antes de ejecutar el programa, asegurate de instalar las dependencias:
+
+`en el bash (ctrl + ñ)
+pip install -r requirements.txt
