@@ -1,12 +1,7 @@
-<<<<<<< HEAD
 
 import tkinter as tk
 from tkinter import messagebox
 import musica
-=======
-import tkinter as tk
-from tkinter import messagebox
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
 import Memoria_Facil
 import Memoria_Medio
 import Memoria_Dificil
@@ -20,13 +15,7 @@ COLOR_TEXTO_OSCURO = "#2c3e50"
 FUENTE_TITULO = ('Helvetica', 18, 'bold')
 FUENTE_BOTON = ('Helvetica', 12, 'bold')
 
-<<<<<<< HEAD
 musica.reproducir_intro() 
-=======
-
-
-
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
 
 def actualizar_records(nivel, movimientos):
     
@@ -40,36 +29,24 @@ def actualizar_records(nivel, movimientos):
 
 
 def cerrar_aplicacion():
-<<<<<<< HEAD
     musica.detener_musica()
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     ventana_principal.destroy()
 
 
 def abrir_memoria_facil():
     ventana_principal.withdraw() 
-<<<<<<< HEAD
     musica.detener_musica()
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     Memoria_Facil.main(ventana_principal, actualizar_records) 
 
 def abrir_memoria_medio():
     ventana_principal.withdraw() 
-<<<<<<< HEAD
     musica.detener_musica()
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     Memoria_Medio.main(ventana_principal, actualizar_records) 
 
 
 def abrir_memoria_dificil():
     ventana_principal.withdraw() 
-<<<<<<< HEAD
     musica.detener_musica()
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     Memoria_Dificil.main(ventana_principal, actualizar_records) 
 
 
@@ -82,24 +59,6 @@ ventana_principal.resizable(False, False)
 ventana_principal.configure(bg=COLOR_FONDO)
 
 try:
-<<<<<<< HEAD
-=======
-    ruta_fondo_principal = os.path.join(ruta_imagenes, "imagen_fondo.png")
-    imagen_fondo_principal_obj = tk.PhotoImage(file=ruta_fondo_principal)
-    ventana_principal.imagen_fondo_principal_ref = imagen_fondo_principal_obj
-
-    label_fondo_principal = tk.Label(ventana_principal, image=imagen_fondo_principal_obj)
-    label_fondo_principal.place(x=0, y=0, relwidth=1, relheight=1)
-    
-    contenedor_widgets = label_fondo_principal
-    bg_widgets_color = label_fondo_principal['bg'] 
-    
-except tk.TclError:
-    ventana_principal.configure(bg=COLOR_FONDO)
-    contenedor_widgets = ventana_principal
-    bg_widgets_color = COLOR_FONDO
-try:
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
   
     img = tk.PhotoImage(file=os.path.join(ruta_imagenes, "icono.png"))
     ventana_principal.iconphoto(True, img)
@@ -151,12 +110,5 @@ btn_dificil = tk.Button(ventana_principal, text='👑 Difícil (12 Pares)',
 btn_dificil.pack(pady=10)
 
 
-<<<<<<< HEAD
 ventana_principal.protocol("WM_DELETE_WINDOW", cerrar_aplicacion)
 ventana_principal.mainloop()
-=======
-
-
-ventana_principal.protocol("WM_DELETE_WINDOW", cerrar_aplicacion)
-ventana_principal.mainloop()
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171

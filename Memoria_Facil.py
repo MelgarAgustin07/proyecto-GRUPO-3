@@ -1,14 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
-<<<<<<< HEAD
 from PIL import Image, ImageTk 
 import random
 import os
 import musica
-=======
-import random
-import os
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
 
 COLOR_FONDO = "#34495e"
 COLOR_SUPERIOR = "#2c3e50"
@@ -19,7 +14,6 @@ FUENTE_MOVIMIENTOS = ('Courier New', 20, 'bold')
 FUENTE_TITULO_RECORDS = ('Helvetica', 14, 'bold')
 FUENTE_PUNTAJE_RECORDS = ('Helvetica', 12)
 
-<<<<<<< HEAD
 ANCHO_VENTANA = 550 
 ALTO_VENTANA = 300
 
@@ -47,17 +41,6 @@ def main(ventana_principal, funcion_actualizar_records):
         ventana_principal.deiconify()
 
 
-=======
-
-def main(ventana_principal, funcion_actualizar_records):
-    
-    ventana_records_abierta = False
-
-    def cerrar_aplicacion():
-        ventana.destroy()
-        ventana_principal.deiconify()
-
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     def manejar_click(index):
         nonlocal bloqueado
         if bloqueado or botones[index]['state'] == 'disabled':
@@ -95,11 +78,7 @@ def main(ventana_principal, funcion_actualizar_records):
     def contar_par():
         nonlocal pares_encontrados
         pares_encontrados += 1
-<<<<<<< HEAD
         if pares_encontrados == TOTAL_PARES:
-=======
-        if pares_encontrados == 4:
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
             mensaje_ganador()
 
     def mensaje_ganador():
@@ -112,11 +91,8 @@ def main(ventana_principal, funcion_actualizar_records):
             msg = f'¡Ganaste con {movimientos} movimientos!'
             
         messagebox.showinfo('🎉 Juego Terminado!', msg)
-<<<<<<< HEAD
         musica.detener_musica()
         musica.reproducir_intro() 
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
         ventana.destroy()
         ventana_principal.deiconify()
 
@@ -136,7 +112,6 @@ def main(ventana_principal, funcion_actualizar_records):
         ventana_records.transient(ventana)
         ventana_records.configure(bg=COLOR_SUPERIOR)
 
-<<<<<<< HEAD
     def mostrar_records_juego():
         nonlocal ventana_records_abierta
         
@@ -144,8 +119,6 @@ def main(ventana_principal, funcion_actualizar_records):
             messagebox.showwarning("Atención", "La ventana de récords ya está abierta.")
             return
 
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
         def cerrar_records_juego():
             nonlocal ventana_records_abierta
             ventana_records_abierta = False
@@ -159,7 +132,6 @@ def main(ventana_principal, funcion_actualizar_records):
         
         if puntajes:
             for i, puntaje in enumerate(puntajes):
-<<<<<<< HEAD
                   color_rank = "#f1c40f" if i == 0 else ("#bdc3c7" if i == 1 else "#cd7f32")
                   tk.Label(ventana_records, text=f"#{i+1}: {puntaje} movimientos", 
                            font=FUENTE_PUNTAJE_RECORDS, bg=color_rank, fg='black', width=20, relief=tk.RIDGE).pack(pady=2)
@@ -172,19 +144,6 @@ def main(ventana_principal, funcion_actualizar_records):
     ventana.resizable(False, False) 
     ventana.configure(bg=COLOR_FONDO)
     ventana.configure(bg=COLOR_SUPERIOR)
-=======
-                 color_rank = "#f1c40f" if i == 0 else ("#bdc3c7" if i == 1 else "#cd7f32")
-                 tk.Label(ventana_records, text=f"#{i+1}: {puntaje} movimientos", 
-                          font=FUENTE_PUNTAJE_RECORDS, bg=color_rank, fg='black', width=20, relief=tk.RIDGE).pack(pady=2)
-        else:
-            tk.Label(ventana_records, text="No hay récords aún.", font=FUENTE_PUNTAJE_RECORDS, bg=COLOR_SUPERIOR, fg=COLOR_TEXTO_CLARO).pack(pady=5)
-            
-    ventana = tk.Toplevel()
-    ventana.title('Juego de Memoria - Fácil')
-    ventana.geometry('550x450')
-    ventana.resizable(False, False) 
-    ventana.configure(bg=COLOR_FONDO)
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     
     ruta_imagenes = os.path.join(os.path.dirname(__file__), "imagenes")
 
@@ -193,11 +152,6 @@ def main(ventana_principal, funcion_actualizar_records):
     
     frame_superior = tk.Frame(ventana, bg=COLOR_SUPERIOR)
     frame_superior.pack(fill='x', pady=0)
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     tk.Label(frame_superior, text="Movimientos: ", 
              bg=COLOR_SUPERIOR, 
              fg=COLOR_TEXTO_CLARO, 
@@ -217,16 +171,11 @@ def main(ventana_principal, funcion_actualizar_records):
                             font=('Helvetica', 10, 'bold'),
                             relief=tk.FLAT)
     btn_records.pack(side=tk.RIGHT, padx=20, pady=10)
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     frame_botones = tk.Frame(ventana, bg=COLOR_FONDO)
     frame_botones.pack(pady=25)
 
     Imagenes = [
-<<<<<<< HEAD
         os.path.join(ruta_imagenes, "amd.png"),
         os.path.join(ruta_imagenes, "basedatos.png"),
         os.path.join(ruta_imagenes, "binario.png"),
@@ -243,22 +192,6 @@ def main(ventana_principal, funcion_actualizar_records):
     imagen_reverso = tk.PhotoImage(file=os.path.join(ruta_imagenes, "reverso.png"))
 
     imagenes_seleccionadas = random.sample(Imagenes, TOTAL_PARES)
-=======
-    os.path.join(ruta_imagenes, "amd.png"),
-    os.path.join(ruta_imagenes, "basedatos.png"),
-    os.path.join(ruta_imagenes, "binario.png"),
-    os.path.join(ruta_imagenes, "c++.png"),
-    os.path.join(ruta_imagenes, "code.png"),
-    os.path.join(ruta_imagenes, "computadora.png"),
-    os.path.join(ruta_imagenes, "html.png"),
-    os.path.join(ruta_imagenes, "intel.png"),
-    os.path.join(ruta_imagenes, "javas.png"),
-    os.path.join(ruta_imagenes, "python.png"),]
-
-    imagen_reverso = tk.PhotoImage(file=os.path.join(ruta_imagenes, "reverso.png"))
-
-    imagenes_seleccionadas = random.sample(Imagenes, 4)
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     imagenes_tk = [tk.PhotoImage(file=img) for img in imagenes_seleccionadas]
     imagenes_duplicadas = imagenes_tk * 2
     random.shuffle(imagenes_duplicadas)
@@ -268,7 +201,6 @@ def main(ventana_principal, funcion_actualizar_records):
     bloqueado = False
     pares_encontrados = 0
 
-<<<<<<< HEAD
     for i in range(TOTAL_PARES * 2):
         boton = tk.Button(frame_botones, 
                           image=imagen_reverso,
@@ -278,17 +210,6 @@ def main(ventana_principal, funcion_actualizar_records):
                           command=lambda i=i: manejar_click(i))
         
         boton.grid(row=i//COLUMNAS, column=i%COLUMNAS, padx=12, pady=12)
-=======
-    for i in range(8):
-        boton = tk.Button(frame_botones, 
-                          image=imagen_reverso,
-                          bd=4,
-                          relief=tk.RAISED,
-                          highlightthickness=2,
-                          highlightbackground=COLOR_SUPERIOR,
-                          command=lambda i=i: manejar_click(i))
-        boton.grid(row=i//4, column=i%4, padx=12, pady=12)
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
         botones.append(boton)
 
     ventana.imagenes_tk = imagenes_duplicadas

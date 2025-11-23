@@ -2,10 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import os
-<<<<<<< HEAD
 import musica
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
 
 COLOR_FONDO = "#34495e"
 COLOR_SUPERIOR = "#2c3e50"
@@ -18,7 +15,6 @@ FUENTE_PUNTAJE_RECORDS = ('Helvetica', 12)
 
 
 def main(ventana_principal, funcion_actualizar_records):
-<<<<<<< HEAD
     musica.reproducir_medio()
     ventana_records_abierta = False
 
@@ -26,12 +22,6 @@ def main(ventana_principal, funcion_actualizar_records):
     def cerrar_aplicacion():
         musica.detener_musica()
         musica.reproducir_intro() 
-=======
-    
-    ventana_records_abierta = False
-
-    def cerrar_aplicacion():
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
         ventana.destroy()
         ventana_principal.deiconify()
 
@@ -85,11 +75,8 @@ def main(ventana_principal, funcion_actualizar_records):
             msg = f'¡Ganaste con {movimientos} movimientos!'
             
         messagebox.showinfo('🎉 Juego Terminado!', msg)
-<<<<<<< HEAD
         musica.detener_musica()
         musica.reproducir_intro() 
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
         ventana.destroy()
         ventana_principal.deiconify()
         
@@ -134,10 +121,7 @@ def main(ventana_principal, funcion_actualizar_records):
     ventana.geometry('550x580')
     ventana.resizable(False, False) 
     ventana.configure(bg=COLOR_FONDO)
-<<<<<<< HEAD
     ventana.configure(bg=COLOR_SUPERIOR)
-=======
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
     
     ruta_imagenes = os.path.join(os.path.dirname(__file__), "imagenes")
 
@@ -180,13 +164,9 @@ def main(ventana_principal, funcion_actualizar_records):
     os.path.join(ruta_imagenes, "html.png"),
     os.path.join(ruta_imagenes, "intel.png"),
     os.path.join(ruta_imagenes, "javas.png"),
-<<<<<<< HEAD
     os.path.join(ruta_imagenes, "python.png"),
     os.path.join(ruta_imagenes, "django.png"),
     os.path.join(ruta_imagenes, "ts.png"),]
-=======
-    os.path.join(ruta_imagenes, "python.png"),]
->>>>>>> 6d6d8b96026645a8b981ea8f22ad6cb145d46171
 
     imagen_reverso = tk.PhotoImage(file=os.path.join(ruta_imagenes, "reverso.png"))
 
