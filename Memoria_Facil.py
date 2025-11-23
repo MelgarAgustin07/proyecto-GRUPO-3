@@ -112,8 +112,6 @@ def main(ventana_principal, funcion_actualizar_records):
         ventana_records.transient(ventana)
         ventana_records.configure(bg=COLOR_SUPERIOR)
 
-    def mostrar_records_juego():
-        nonlocal ventana_records_abierta
         
         if ventana_records_abierta:
             messagebox.showwarning("Atención", "La ventana de récords ya está abierta.")
